@@ -23,6 +23,17 @@ app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/stream", streamRoutes);
 app.use("/api/calls", callRoutes);
+app.get("/api/status", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is running",
+    data: {
+      database:
+        mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+      uptimeSeconds: Math.floor(process.uptime()),
+    },
+  });
+});
 app.use(notFoundHandler);
 app.use(errorHandler);
 configureSocket(server);
