@@ -26,7 +26,7 @@ app.use("/api/calls", callRoutes);
 app.get("/api/status", (_req, res) => {
   res.status(200).json({
     success: true,
-    message: "Server is running",
+    message: "Server is running successfully",
     data: {
       database:
         mongoose.connection.readyState === 1 ? "connected" : "disconnected",
