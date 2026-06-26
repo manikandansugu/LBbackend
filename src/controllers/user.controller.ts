@@ -289,7 +289,8 @@ export const createPassword = async (
       throw new AppError("Invalid authorization token", 401);
     }
 
-    const { location, password } = req.body as {
+    const { gender, location, password } = req.body as {
+      gender?: string;
       location?: string;
       password?: string;
     };
@@ -303,6 +304,10 @@ export const createPassword = async (
       throw new AppError("Password must be at least 8 characters", 400);
     }
 
+    if (!gender || !["male", "female", "other"].includes(gender)) {
+      throw new AppError("Valid gender is required", 400);
+    }
+
     const user = await User.findOne({
       $or: [{ email: tokenSubject }, { phoneNumber: tokenSubject }],
     });
@@ -313,6 +318,7 @@ export const createPassword = async (
 
     user.location = normalizedLocation;
     user.password = hash_password(password);
+    user.gender = gender as "male" | "female" | "other";
     await user.save();
 
     const updatedUser = await User.findById(user._id);

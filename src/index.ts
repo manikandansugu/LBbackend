@@ -10,6 +10,7 @@ import path from "path";
 import { createServer } from "http";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 import { configureSocket } from "./socket";
+import cors from "cors";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -18,6 +19,7 @@ const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
@@ -47,7 +49,7 @@ const connectDB = async () => {
     const connect = await mongoose.connect(process.env.MONGO_URI as string);
     if (Number(connect.connection.readyState === 1)) {
       await Call.collection.dropIndex("callId_1").catch(() => undefined);
-      server.listen(PORT, () => {
+      server.listen(PORT, Number("0.0.0.0"), () => {
         console.log(`Server running on port ${PORT}`);
       });
     }
